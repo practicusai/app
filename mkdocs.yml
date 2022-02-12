@@ -1,1 +1,27 @@
-site_name: AI2Table Documentation
+site_name: AI 2 Table
+
+theme:
+  name: material
+  custom_dir: overrides
+  palette:
+  - scheme: default
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to light mode
+  - scheme: slate
+    toggle:
+      icon: material/weather-night
+      name: Switch to dark mode
+  logo: img/ai2table50.png
+  favicon: img/ai2table50.png
+  language: en
+
+nav:
+  - Home: index.md
+  - Getting Started: start.md
+  - Use Cases:
+    - Data Preparation: data-prep.md
+    - Share AI Models: share-models.md
+  - API Reference: api-reference.md
+  - Advanced Features: advanced.md
+  - Feedback: feedback.md
