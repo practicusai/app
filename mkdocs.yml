@@ -19,7 +19,7 @@ theme:
 nav:
   - Home: index.md
   - Getting Started: start.md
-  - Use Cases:
+  - Common Use Cases:
     - Data Preparation: data-prep.md
     - Share AI Models: share-models.md
   - API Reference: api-reference.md
