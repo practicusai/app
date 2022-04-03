@@ -1,31 +1,31 @@
 
-In this section we will look at some advanced functionality of ai2table. 
+In this section we will look at some advanced functionality of Practicus AI. 
 
 ## Production Data Pipelines
 
 Typically, an ML workflow will depend on several cycles of data preparation steps before the final ML training can be done. This is rarely a one time task, since your ML model might eventually start drifting as time goes by (not predicting accurately anymore). When this happens, the first thing to try is usually re-training with new, fresh data. Which means you have to reload data from raw data sources, and apply data preparation steps again.  Instead of preparing data manually every time you train, some teams create automated data pipelines. These pipelines usually run on a schedule, for instance daily, creating clean and ready-to-train-on data sets. 
 
-You can easily build data pipelines with ai2table, and embed them into existing data integration platforms.  All you need is a platform that can run Python. Please see some performance tips below in the example code 
+You can easily build data pipelines with Practicus AI, and embed them into existing data integration platforms.  All you need is a platform that can run Python. Please see some performance tips below in the example code 
 
 Achieving this is straightforward, you can simply "chain" data preparation steps using .dp files, and not necessarily the updated Excel files for performance reasons. 
 
 Example data pipeline:
 
 ```python
-import ai2table
+import practicus
 # 1) create a Python .py file for the data pipeline
 # 2) place your data loading code as usual, from databases, S3 etc. 
 df = load_data_as_usual()
 # 3) excute changes in .dp files one after another
-ai2table.apply_changes(df, "data_prep_1.dp", inplace=True)
-ai2table.apply_changes(df, "data_prep_2.dp", inplace=True)
+practicus.apply_changes(df, "data_prep_1.dp", inplace=True)
+practicus.apply_changes(df, "data_prep_2.dp", inplace=True)
 # ...
-ai2table.apply_changes(df, "data_prep_10.dp", inplace=True)
+practicus.apply_changes(df, "data_prep_10.dp", inplace=True)
 # pipeline is completed
 save_to_final_dest_as_usual(df)
 
 # Performance Tips: 
-# 1) Pandas Data Frame will work faster with ai2table, especially for very large datasets 
+# 1) Pandas Data Frame will work faster with practicus, especially for very large datasets 
 # 2) You can use "inplace=True" updates, to avoid creating new data frames 
 # 3) you can delete sorting and column reordering commands in the .dp files, since your 
 # ML model training will not care. Especially sorting is a relatively expensive operation.  
@@ -34,15 +34,15 @@ save_to_final_dest_as_usual(df)
 
 **Deployment**
 
-Once the data pipeline Pyhton code (.py) is ready like the above, you can then "pip install mlxl" in the data integration platform and run the .py file as usual. Please note that ai2table uses Java (>= v8.0) behind the scenes for some complex operations. Although it is unlikely, if there is no Java runtime (JRE) installed on the data integration platform, ai2table will download a local copy of the JRE, first time it runs. This local Java installation is purely a "file download" operation of a stripped down JRE, and will not need any root/admin privileges.  You can also manually trigger downloading the local JRE operation in advance by calling *ai2table.install_jre()*, or install Java (>= v8.0) yourself. We recommend <a href="https://adoptopenjdk.net/" target="_blank">Open JDK</a>.  
+Once the data pipeline Pyhton code (.py) is ready like the above, you can then "pip install practicus" in the data integration platform and run the .py file as usual. Please note that Practicus AI uses Java (>= v8.0) behind the scenes for some complex operations. Although it is unlikely, if there is no Java runtime (JRE) installed on the data integration platform, Practicus AI will download a local copy of the JRE, first time it runs. This local Java installation is purely a "file download" operation of a stripped down JRE, and will not need any root/admin privileges.  You can also manually trigger downloading the local JRE operation in advance by calling *practicus.install_jre()*, or install Java (>= v8.0) yourself. We recommend <a href="https://adoptopenjdk.net/" target="_blank">Open JDK</a>.  
 
 ## DP file structure
 
-ai2table can detect changes made inside an Excel (.xlsx) file when you call detect_changes() or apply_changes()  functions. The recorded changes are then saved to a simple text file with the extension **.dp** (**d**ata **p**rep).
+Practicus AI can detect changes made inside an Excel (.xlsx) file when you call detect_changes() or apply_changes()  functions. The recorded changes are then saved to a simple text file with the extension **.dp** (**d**ata **p**rep).
 
 The .dp file is intended to be easily consumed by users that are **not** programmers or data scientists. The goal is to create a happy medium so that different user personas can view the changes detected in the .dp file and collaborate on a data science project.
 
-The .dp file does not necessarily need to only include changes that are detected by ai2table. As you can read below, you can freely add your own changes or remove existing ones, and then finally ask ai2table to run these data prep steps on your data sets to complete data preparatation. 
+The .dp file does not necessarily need to only include changes that are detected by Practicus AI. As you can read below, you can freely add your own changes or remove existing ones, and then finally ask Practicus AI to run these data prep steps on your data sets to complete data preparatation. 
 
 The below is a simple .dp file example. 
 
@@ -54,7 +54,7 @@ The below is a simple .dp file example.
 Input_Columns = [Column Name 1], [Column Name 2], ..
 ```
 
-This is an *optional* section, but it is recommended to use for *data validation*. When ai2table starts analyzing an Excel (.xlsx) file, it will detect all of the visible column names and add them in the Input_Columns section.  When you execute apply_changes() with a new data set, ai2table will compare the column names of the inpot data set to Input_Columns and give you a warning if they are not the same. For example, let's assume you have a data set with Col_1, Col_2, Col_3 columns, export to .xlsx, make some changes and then run detect_changes(). You will see Input_Columns = [Col_1], [Col_2], [Col_3]. Let's assume you then go ahaed and delete  Col_2 in your data set, and apply the .dp file. You would get a warning that the input columns do not match with the input data set. 
+This is an *optional* section, but it is recommended to use for *data validation*. When Practicus AI starts analyzing an Excel (.xlsx) file, it will detect all of the visible column names and add them in the Input_Columns section.  When you execute apply_changes() with a new data set, Practicus AI will compare the column names of the inpot data set to Input_Columns and give you a warning if they are not the same. For example, let's assume you have a data set with Col_1, Col_2, Col_3 columns, export to .xlsx, make some changes and then run detect_changes(). You will see Input_Columns = [Col_1], [Col_2], [Col_3]. Let's assume you then go ahaed and delete  Col_2 in your data set, and apply the .dp file. You would get a warning that the input columns do not match with the input data set. 
 
 Example: 
 
@@ -68,7 +68,7 @@ Input_Columns = [CRIM], [ZN], [INDUS]
 Drop_Column(Col[name of the column to delete])
 ```
 
-Will delete a column from the data set.  ai2table will add a Drop_Column command for both deleted **and** hidden columns in an Excel (.xlsx) file. The only difference is that deleted columns will run early on in the .dp file and hidden columns will be deleted later since formulas or filters can depend on them. It is common that a user creates a new Excel column, uses a formula and then hides the old column that the formula uses. 
+Will delete a column from the data set.  Practicus AI will add a Drop_Column command for both deleted **and** hidden columns in an Excel (.xlsx) file. The only difference is that deleted columns will run early on in the .dp file and hidden columns will be deleted later since formulas or filters can depend on them. It is common that a user creates a new Excel column, uses a formula and then hides the old column that the formula uses. 
 
 Example: 
 
@@ -103,7 +103,7 @@ Update(Col[ZN] 5 to 10)
 Rename_Column(Col[current name] to Col[new name])
 ```
 
-Will rename a column. ai2table will only analyze top n rows to detect potential renames and can miss some of them in complex cases. Please feel free to manually detect these and add them to the .dp file. 
+Will rename a column. Practicus AI will only analyze top n rows to detect potential renames and can miss some of them in complex cases. Please feel free to manually detect these and add them to the .dp file. 
 
 Example: 
 
@@ -119,7 +119,7 @@ Rename_Column(Col[petal_width] to Col[petal width])
 Col[name of the column] = EXCEL_FUNCTION( .. EMBEDDED_FUNCTIONS(..) .. ) + OPERATORS
 ```
 
-Using functions to create formulas is probably one of the most powerful features of Excel. The same is true for ai2table data prep use case as well. ai2table currently interprets over **200+ Excel functions** and applies them with custom created Python code to your data set to perform the data transformation.  If ai2table ever encounters an Excel function that it doesn't understand, it will create a Python template for you to provide the missing functionality. Please read more about this in custom functions section below.   ai2table currently only supports functions and formulas to run on the same row.  For things like averages of all values for  a particular column, you can use seperate sheets or pivot tables to do yor analysis, and then finally perform the the data preparation steps on individual rows.  
+Using functions to create formulas is probably one of the most powerful features of Excel. The same is true for Practicus AI data prep use case as well. Practicus AI currently interprets over **200+ Excel functions** and applies them with custom created Python code to your data set to perform the data transformation.  If Practicus AI ever encounters an Excel function that it doesn't understand, it will create a Python template for you to provide the missing functionality. Please read more about this in custom functions section below.   Practicus AI currently only supports functions and formulas to run on the same row.  For things like averages of all values for  a particular column, you can use seperate sheets or pivot tables to do yor analysis, and then finally perform the the data preparation steps on individual rows.  
 
 Examples:
 
@@ -204,9 +204,9 @@ Reorder_Columns([CRIM], [CHAS], [NOX])
 Col[name of the column] = MY_UDF(..)
 ```
 
-ai2table supports defining your own User Defined Functions (UDFs) in a .dp file. If ai2table.apply_changes() function encounters a function name that it doesn't know, it will create a placeholder Python .py file for you to be completed later. The same will also happen if ai2table encounters an Excel function it doesn't recognize. 
+Practicus AI supports defining your own User Defined Functions (UDFs) in a .dp file. If Practicus AI.apply_changes() function encounters a function name that it doesn't know, it will create a placeholder Python .py file for you to be completed later. The same will also happen if Practicus AI encounters an Excel function it doesn't recognize. 
 
-ai2table custom function names follow Excel syntax: capitol letters, "A-Z" and numbers  "0-9", with the exception of an underscore  "_". For example MY_FUNCTION_2(). MyFunction2() is not a valid Excel or ai2table function name.   
+Practicus AI custom function names follow Excel syntax: capitol letters, "A-Z" and numbers  "0-9", with the exception of an underscore  "_". For example MY_FUNCTION_2(). MyFunction2() is not a valid Excel or Practicus AI function name.   
 
 Example: 
 
@@ -221,13 +221,13 @@ Col[A] = MY_FUNCTION(Col[B], Col[C], 1, 2, 3)
 and run 
 
 ```python
-df2 = ai2table.apply_changes(df, "sample.dp")
+df2 = practicus.apply_changes(df, "sample.dp")
 ```
 
 This will create "sample_dp.py" file, place the missing function and raise a NotImplemented error. 
 
 ```python
-def ai2table_my_function(row, *args):
+def practicus_my_function(row, *args):
   	# you can define your function and then delete the below line
     raise NotImplementedError('MY_FUNCTION')
     
@@ -242,7 +242,7 @@ def ai2table_my_function(row, *args):
 # what you get will have more lines, including proper exception handling
 ```
 
-After you fill the missing function template, you can re-run ai2table.apply_changes() in your notebook, and your UDF MY_FUNCTION() will execute for all the rows on the data frame, in combination with other commands. 
+After you fill the missing function template, you can re-run practicus.apply_changes() in your notebook, and your UDF MY_FUNCTION() will execute for all the rows on the data frame, in combination with other commands. 
 
 You can also mix and match different UDFs and Excel functions on the same line as you wish. 
 
