@@ -1,4 +1,4 @@
-[You can download the latest version from releases section ->](https://github.com/practicusai/app/releases/tag/latest)
+[You can download the latest version from releases section ->](https://github.com/practicusai/app/releases/latest/)
 
 [**Practicus AI**](https://practicus.ai) is a free platform that allows **ML data preparation**, zero dependency **ML model deployment**, **model debugging** and **model explainability**. 
 
