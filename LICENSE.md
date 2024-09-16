@@ -142,3 +142,9 @@ https://github.com/scikit-learn/scikit-learn
 
 Hadoop
 https://github.com/apache/hadoop
+
+VS Code 
+https://github.com/microsoft/vscode
+
+Code Server
+https://github.com/coder/code-server
